@@ -74,12 +74,12 @@ def review(
         apikey: str = None
         ):
     old_treedict = treedict
-    preference = input('Please review the changes. If you are satisfied, please enter "bing chilling", and if not, please tell me whatever you want to change: ')
+    preference = input('Please review the changes. If you are satisfied, please enter "yes", and if not, please tell me whatever you want to change: ')
 
     with open('tree_generation_prompt.txt', 'r') as f:
         final_prompt = f.read()
 
-    while preference != "bing chilling":
+    while preference != "yes":
 #         producer = OllamaProducer(host="localhost")
 #        producer.setup(prompt=final_prompt, model='llama3', options={'num_predict':-1})
         treedict, tree = producer.produce()
