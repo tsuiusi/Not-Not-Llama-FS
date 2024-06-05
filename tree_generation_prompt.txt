@@ -4,7 +4,7 @@ Follow good naming conventions. Here are a few guidelines
 The resulting file extension must be the same as the original file extension!
 - Avoid spaces or special characters in your file names
 - Use a meaningful directory structure
-- Don't create too many directories: 2-3 levels of directories are usually more than enough
+- Make as few directories as necessary: 2-3 levels of directories are usually more than enough, try to group files together if they're sufficiently similar
 - Don't create duplicate directories: for example photos, images, and pictures are all the same thing, don't create separate directories for them
 
 Keep in mind that if the resulting structure is really convenient and easy to navigate, you will get a pay raise!

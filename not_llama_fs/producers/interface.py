@@ -12,15 +12,7 @@ class ABCProducer(abc.ABC):
         self.prepared_files: list[tuple[str, str]] = []
 
     @abc.abstractmethod
-    def prepare_file(self, path: pathlib.Path):
-        pass
-
-    @abc.abstractmethod
     def produce(self) -> TreeObject:
-        pass
-
-    @abc.abstractmethod
-    def prepare_files(self):
         pass
 
     @abc.abstractmethod

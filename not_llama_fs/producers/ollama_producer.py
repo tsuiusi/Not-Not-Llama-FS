@@ -41,12 +41,6 @@ class OllamaProducer(ABCProducer):
             )
         return self._client
     
-    def prepare_file(self):
-        pass
-    
-    def prepare_files(self):
-        pass
-
     def prepare_files_llamaindex(self, path):
         if self.model is None:
             raise ValueError("Model is not set")
