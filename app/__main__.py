@@ -2,8 +2,9 @@ import argparse
 import logging
 import pathlib
 import sys
+import time
 
-from app import demo, IMAGE_SUPPORT_PRODUCERS, move_file
+from app import demo, IMAGE_SUPPORT_PRODUCERS, move_file, review
 
 
 def main():
@@ -16,18 +17,20 @@ def main():
     parser.add_argument("--ignore", type=str, help="Folders to ignore", default="") 
 
     args = parser.parse_args()
-    print(args.command, args.path)
+#     print(args.command, args.path)
 
     if args.command == "demo":
-        treedict = demo(args.path, args.producer, args.preference, args.ignore, args.apikey)
+        treedict, producer = demo(args.path, args.producer, args.preference, args.ignore, args.apikey)
     else:
         print("Unknown command")
 
+    # time to adjust here, improve the below code for more user control
+    review(treedict, producer, args.producer, args.ignore, args.apikey)
 
-
-    # time to adjust here, improve the below code for more user control 
     for file in treedict['files']:
         move_file(args.path, file)
     
 if __name__ == "__main__":
+    tic = time.perf_counter()
     main()
+    print(f'time taken: {(time.perf_counter() - tic):.2f}')

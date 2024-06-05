@@ -27,7 +27,7 @@ class ABCProducer(abc.ABC):
         while dirs:
             for directory in dirs:
                 for file in directory.iterdir():
-                    print(file)
+#                    print(file)
                     if file.is_file():
                         self.load_file(file)
                     elif file.is_dir():

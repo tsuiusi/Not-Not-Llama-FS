@@ -49,7 +49,7 @@ def demo(
     treedict, tree = producer.produce() # issue here with how the model is producing , dictionaries for metadata is not consistent at all
     
     print(tree) # Show the ascii art for the new directory
-    return treedict
+    return treedict, producer
 
 
 def move_file(src, file):
@@ -66,5 +66,28 @@ def move_file(src, file):
     except Exception as e:
         raise e
 
-def review(treedict):
-    pass
+def review(
+        treedict, 
+        producer,
+        producer_name: str = "ollama", # this and apikey will be added once it works, add the producer option like in the other thing.
+        ignore: str = "",
+        apikey: str = None
+        ):
+    old_treedict = treedict
+    preference = input('Please review the changes. If you are satisfied, please enter "bing chilling", and if not, please tell me whatever you want to change: ')
+
+    with open('tree_generation_prompt.txt', 'r') as f:
+        final_prompt = f.read()
+
+    while preference != "bing chilling":
+#         producer = OllamaProducer(host="localhost")
+#        producer.setup(prompt=final_prompt, model='llama3', options={'num_predict':-1})
+        treedict, tree = producer.produce()
+
+        print(tree) 
+        preference = input("is this good?: ")
+
+    return treedict
+
+
+

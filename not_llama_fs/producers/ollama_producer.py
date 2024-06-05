@@ -49,7 +49,9 @@ class OllamaProducer(ABCProducer):
         if self.options is None:
             raise ValueError("Options are not set")
 
-        reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=[ignore]) 
+        ignore = ignore.split(','.strip())
+
+        reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=["/Users/rtty/downloads/bigtest/goodclass-ai-tools-updated/", "/Users/rtty/downloads/bigtest/copy-gdrive-folder", "/Users/rtty/downloads/bigtest/librarian/"]) 
             
         for file in reader.iter_data():
             result = self.client.generate(
@@ -66,13 +68,15 @@ class OllamaProducer(ABCProducer):
             self.prepared_files.append((filepath, result["response"]))
         
 
-    def produce(self) -> TreeObject:
+    def produce(self, prompt=None) -> TreeObject:
         if self.model is None:
             raise ValueError("Model is not set")
         if self.prompt is None:
             raise ValueError("Prompt is not set")
         if self.options is None:
             raise ValueError("Options are not set")
+
+        final_prompt = prompt if prompt is not None else json.dumps(self.prepared_files)
 
         llama_response = self.client.generate(
             system=self.prompt,
@@ -97,7 +101,6 @@ class OllamaProducer(ABCProducer):
                 llama_response_json["files"][n]["dst_path"] = dst_path.as_posix()
 
         return llama_response_json, TreeObject.from_json(llama_response_json)
-
 
 def clean_filename(filename):
     extension = os.path.dirname(filename)
