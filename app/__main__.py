@@ -15,6 +15,7 @@ def main():
     parser.add_argument("--text-model", type=str, help="Text model to use", default=None)
     parser.add_argument("--image-model", type=str, help="Image model to use", default=None)
     parser.add_argument("--preference", type=str, help="Preferences to how the new directory should be sorted", default="")
+    parser.add_argument("--ignore", type=str, help="Folders to ignore", default="") # A hard coded implementation of this would probably be better than LLM solution
     args = parser.parse_args()
     print(args.command, args.path)
 
@@ -32,7 +33,7 @@ def main():
             args.image_model = "llava"
 
     if args.command == "demo":
-        treedict = demo(args.path, args.producer, args.preference, args.text_model, args.image_model, args.apikey)
+        treedict = demo(args.path, args.producer, args.preference, args.ignore, args.text_model, args.image_model, args.apikey)
     else:
         print("Unknown command")
     

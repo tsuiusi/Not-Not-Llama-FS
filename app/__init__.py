@@ -12,6 +12,7 @@ def demo(
         path: pathlib.Path,
         producer_name: str = "ollama",
         preference: str = "",
+        ignore: str = "",
         text_model: str = "llama3",
         image_model: str = "llava",
         apikey: str = None
@@ -24,8 +25,11 @@ def demo(
 
     with open("tree_generation_prompt.txt", "r") as f:
         final_prompt = f.read()
+        if ignore != "":
+            final_prompt += f"\nIgnore and do not change {ignore} or its contents"
+
         if preference != "":
-            final_prompt += f"\nUser Preferences: {preference}"
+            final_prompt += f"\nUser Preference: {preference}"
 
     print(f"Using producer {producer_name}")
     options = {}
@@ -64,3 +68,5 @@ def move_file(src, file):
 
     except Exception as e:
         raise e
+
+
