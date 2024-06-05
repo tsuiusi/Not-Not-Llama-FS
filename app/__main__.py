@@ -14,6 +14,7 @@ def main():
     parser.add_argument("--apikey", type=str, help="API key for Groq/Claude/OpenAI", default=None)
     parser.add_argument("--text-model", type=str, help="Text model to use", default=None)
     parser.add_argument("--image-model", type=str, help="Image model to use", default=None)
+    parser.add_argument("--preference", type=str, help="Preferences to how the new directory should be sorted", default="")
     args = parser.parse_args()
     print(args.command, args.path)
 
@@ -24,23 +25,18 @@ def main():
     if args.text_model is None:
         if args.producer == "ollama":
             args.text_model = "llama3"
-        elif args.producer == "claude":
-            args.text_model = "claude-3-haiku-20240307"
         elif args.producer == "groq":
             args.text_model = "llama3-70b-8192"
-        elif args.producer == "openai":
-            args.text_model = "gpt-4o"  # "gpt-3.5-turbo-1106"
     if args.image_model is None:
         if args.producer == "ollama":
             args.image_model = "llava"
-        elif args.producer == "claude":
-            args.image_model = "claude-3-haiku-20240307"
 
     if args.command == "demo":
-        treedict = demo(args.path, args.producer, args.text_model, args.image_model, args.apikey)
+        treedict = demo(args.path, args.producer, args.preference, args.text_model, args.image_model, args.apikey)
     else:
         print("Unknown command")
-
+    
+    # time to adjust here, improve the below code for more user control 
     for file in treedict['files']:
         move_file(args.path, file)
     
