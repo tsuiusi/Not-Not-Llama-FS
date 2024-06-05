@@ -13,8 +13,6 @@ def demo(
         producer_name: str = "ollama",
         preference: str = "",
         ignore: str = "",
-        text_model: str = "llama3",
-        image_model: str = "llava",
         apikey: str = None
 ):
     if not path.exists():
@@ -27,6 +25,8 @@ def demo(
         final_prompt = f.read()
         if ignore != "":
             final_prompt += f"\nIgnore and do not change {ignore} or its contents"
+        if preference != "":
+            final_prompt += f"\nUser Preference: {preference}"
 
     print(f"Using producer {producer_name}")
     options = {}
@@ -43,7 +43,7 @@ def demo(
 
     producer.load_directory(path)
 
-    producer.setup(prompt, model=text_model, options=options)
+    producer.setup(prompt, model=model, options=options)
     producer.prepare_files_llamaindex(path, ignore)
     producer.setup(final_prompt, model=model, options=produce_options)
     treedict, tree = producer.produce() # issue here with how the model is producing , dictionaries for metadata is not consistent at all
