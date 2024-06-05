@@ -28,9 +28,6 @@ def demo(
         if ignore != "":
             final_prompt += f"\nIgnore and do not change {ignore} or its contents"
 
-        if preference != "":
-            final_prompt += f"\nUser Preference: {preference}"
-
     print(f"Using producer {producer_name}")
     options = {}
     produce_options = {}
@@ -47,7 +44,7 @@ def demo(
     producer.load_directory(path)
 
     producer.setup(prompt, model=text_model, options=options)
-    producer.prepare_files_llamaindex(path)
+    producer.prepare_files_llamaindex(path, ignore)
     producer.setup(final_prompt, model=model, options=produce_options)
     treedict, tree = producer.produce() # issue here with how the model is producing , dictionaries for metadata is not consistent at all
     
@@ -69,4 +66,5 @@ def move_file(src, file):
     except Exception as e:
         raise e
 
-
+def review(treedict):
+    pass

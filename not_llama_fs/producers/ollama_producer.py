@@ -41,7 +41,7 @@ class OllamaProducer(ABCProducer):
             )
         return self._client
     
-    def prepare_files_llamaindex(self, path):
+    def prepare_files_llamaindex(self, path, ignore):
         if self.model is None:
             raise ValueError("Model is not set")
         if self.prompt is None:
@@ -49,7 +49,7 @@ class OllamaProducer(ABCProducer):
         if self.options is None:
             raise ValueError("Options are not set")
 
-        reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True) # recursively loads all the files in the directory of the accepted data types (see the website for available types)
+        reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=[ignore]) 
             
         for file in reader.iter_data():
             result = self.client.generate(
