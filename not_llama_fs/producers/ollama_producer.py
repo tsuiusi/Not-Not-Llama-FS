@@ -41,7 +41,7 @@ class OllamaProducer(ABCProducer):
             )
         return self._client
     
-    def prepare_files_llamaindex(self, path):
+    def prepare_files_llamaindex(self, path, ignore):
         if self.model is None:
             raise ValueError("Model is not set")
         if self.prompt is None:
@@ -49,7 +49,7 @@ class OllamaProducer(ABCProducer):
         if self.options is None:
             raise ValueError("Options are not set")
 
-        reader = SimpleDirectoryReader(path, recursive=True) # recursively loads all the files in the directory of the accepted data types (see the website for available types)
+        reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=[ignore]) 
             
         for file in reader.iter_data():
             result = self.client.generate(
@@ -59,8 +59,11 @@ class OllamaProducer(ABCProducer):
                     options = self.options,
                     format = "json"
             )
-            print(f"Prepared {path}, result: {file[0].metadata['file_name']}")
-            self.prepared_files.append((os.path.join(path.as_posix(), file[0].metadata['file_name']), result["response"]))
+
+            filepath = clean_filename(file[0].doc_id)
+
+            print(f"Prepared {filepath}")
+            self.prepared_files.append((filepath, result["response"]))
         
 
     def produce(self) -> TreeObject:
@@ -93,4 +96,12 @@ class OllamaProducer(ABCProducer):
                 dst_path = dst_path.with_suffix(src_path.suffix)
                 llama_response_json["files"][n]["dst_path"] = dst_path.as_posix()
 
-        return json.loads(llama_response), TreeObject.from_json(llama_response_json)
+        return llama_response_json, TreeObject.from_json(llama_response_json)
+
+
+def clean_filename(filename):
+    extension = os.path.dirname(filename)
+    base_name = os.path.basename(filename)
+    if base_name.endswith('_part_0'):
+        base_name = base_name[:-7]
+    return os.path.join(extension, base_name) 
