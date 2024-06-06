@@ -2,6 +2,7 @@ import abc
 import logging
 import pathlib
 import time
+import os
 
 from not_llama_fs.fs.tree import TreeObject
 
@@ -35,3 +36,11 @@ class ABCProducer(abc.ABC):
                     else:
                         logging.warning(f"Skipping {file} as it is not a file nor a directory")
                 dirs.pop(0)
+
+def clean_filename(filename):
+    extension = os.path.dirname(filename)
+    base_name = os.path.basename(filename)
+    if base_name.endswith('_part_0'):
+        base_name = base_name[:-7]
+    return os.path.join(extension, base_name) 
+

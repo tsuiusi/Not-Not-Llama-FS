@@ -7,7 +7,7 @@ import magic
 import ollama
 from llama_index.core import SimpleDirectoryReader
 
-from .interface import ABCProducer
+from .interface import ABCProducer, clean_filename
 from ..fs.tree import TreeObject
 
 
@@ -98,10 +98,3 @@ class OllamaProducer(ABCProducer):
 
         return llama_response_json, TreeObject.from_json(llama_response_json)
 
-
-def clean_filename(filename):
-    extension = os.path.dirname(filename)
-    base_name = os.path.basename(filename)
-    if base_name.endswith('_part_0'):
-        base_name = base_name[:-7]
-    return os.path.join(extension, base_name) 
