@@ -4,9 +4,7 @@ import os
 
 from not_llama_fs.producers.groq_producer import GroqProducer
 from not_llama_fs.producers.ollama_producer import OllamaProducer
-
-IMAGE_SUPPORT_PRODUCERS = ["ollama", "claude"]
-
+from not_llama_fs.producers.openai_producer import OpenAIProducer
 
 def demo(
         path: pathlib.Path,
@@ -27,17 +25,22 @@ def demo(
         final_prompt = f.read()
         if ignore != "":
             final_prompt += f"\nIgnore and do not change {ignore} or its contents"
+        if preference != "":
+            final_prompt += f"\nUser Preference: {preference}"
 
     print(f"Using producer {producer_name}")
     options = {}
     produce_options = {}
-    if producer_name == "ollama":
+    if producer_name == 'ollama':
         model = 'llama3'
         producer = OllamaProducer(host="localhost")
         options = {"num_predict": 128}
         produce_options = {"num_predict": -1}
     elif producer_name == "groq":
         producer = GroqProducer(api_key=apikey)
+    elif producer_name == 'openai':
+        model = "gpt-4o"
+        producer = OpenAIProducer(api_key=apikey)
     else:
         raise ValueError(f"Unknown producer {producer_name}")
 
