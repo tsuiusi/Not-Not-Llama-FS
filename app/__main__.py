@@ -4,7 +4,7 @@ import pathlib
 import sys
 import time
 
-from app import demo, move_file, review
+from app import demo, move_files, review, revert
 
 
 def main():
@@ -12,8 +12,8 @@ def main():
     parser.add_argument("command", type=str, help="Command to execute")
     parser.add_argument("path", type=pathlib.Path, help="Path to directory")
     parser.add_argument("--producer", type=str, help="Producer to use: ollama/groq/openai", default="ollama")
-    parser.add_argument("--preference", type=str, help="Preferences to how the new directory should be sorted", default="")
-    parser.add_argument("--ignore", type=str, help="Folders to ignore", default="")
+    parser.add_argument("--preference", type=str, help="Preferences to how the new directory should be sorted", default=None)
+    parser.add_argument("--ignore", type=str, help="Folders to ignore", default=None)
     parser.add_argument("--apikey", type=str, help="API key for Groq/Claude/OpenAI", default="sk-proj-dpKFPzwwKO2c8HkTOQABT3BlbkFJB4h5AjAMqAvY9cfmVwYx")
     args = parser.parse_args()
     print(args.command, args.path)
@@ -24,8 +24,10 @@ def main():
         print("Unknown command")
     
     # time to adjust here, improve the below code for more user control 
-    for file in treedict["files"]:
-        move_file(args.path, file)
+    move_files(args.path, treedict)
+    
+    if input("would you like to revert it back? y/n: ") == 'y':
+        revert(args.path, treedict)
     
 if __name__ == "__main__":
     tic = time.perf_counter()

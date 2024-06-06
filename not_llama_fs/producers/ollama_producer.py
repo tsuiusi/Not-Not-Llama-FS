@@ -50,11 +50,14 @@ class OllamaProducer(ABCProducer):
             raise ValueError("Options are not set")
        
         # Split ignore to take a single string as input
-        ignore = ignore.split(',')
-        for i in range(len(ignore)):
-            ignore[i] = os.path.join(path, ignore[i].strip())
-        print(f"Ignoring files/folder: {ignore}")
-        ignore = ignore.split(','.strip())
+        if ignore is not None:
+            ignore = ignore.split(',')
+            for i in range(len(ignore)):
+                ignore[i] = os.path.join(path, ignore[i].strip())
+            print(f"Ignoring files/folder: {ignore}")
+        else:
+            ignore = []
+            print("Not ignoring any files")
 
         reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=["/Users/rtty/downloads/bigtest/goodclass-ai-tools-updated/", "/Users/rtty/downloads/bigtest/copy-gdrive-folder", "/Users/rtty/downloads/bigtest/librarian/"]) 
         # reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=ignore) 
@@ -79,8 +82,6 @@ class OllamaProducer(ABCProducer):
             raise ValueError("Prompt is not set")
         if self.options is None:
             raise ValueError("Options are not set")
-
-        final_prompt = prompt if prompt is not None else json.dumps(self.prepared_files)
 
         llama_response = self.client.generate(
             system=self.prompt,

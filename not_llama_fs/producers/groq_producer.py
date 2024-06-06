@@ -49,10 +49,13 @@ class GroqProducer(ABCProducer):
             raise ValueError("Options are not set")
 
         # Split ignore to take a single string as input
-        ignore = ignore.split(',')
-        for i in range(len(ignore)):
-            ignore[i] = os.path.join(path, ignore[i].strip())
-        print(f"Ignoring files/folder: {ignore}")
+        if ignore is not None:
+            ignore = ignore.split(',')
+            for i in range(len(ignore)):
+                ignore[i] = os.path.join(path, ignore[i].strip())
+            print(f"Ignoring files/folder: {ignore}")
+        else:
+            ignore = []
 
         reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=ignore) 
 
