@@ -20,6 +20,10 @@ class ABCProducer(abc.ABC):
     def setup(self, prompt: str, model: str, options: dict | None = None):
         pass
 
+    @abc.abstractmethod
+    def prepare_files(self):
+        pass
+
     def load_file(self, path: pathlib.Path):
         self.files.append(path)
 
@@ -28,7 +32,6 @@ class ABCProducer(abc.ABC):
         while dirs:
             for directory in dirs:
                 for file in directory.iterdir():
-                    print(file)
                     if file.is_file():
                         self.load_file(file)
                     elif file.is_dir():
@@ -38,9 +41,10 @@ class ABCProducer(abc.ABC):
                 dirs.pop(0)
 
 def clean_filename(filename):
+    # Because of indexing in llama_index, the file paths get "_part_0" appended to them
     extension = os.path.dirname(filename)
     base_name = os.path.basename(filename)
-    if base_name.endswith('_part_0'):
+    if base_name.endswith("_part_0"):
         base_name = base_name[:-7]
     return os.path.join(extension, base_name) 
 
