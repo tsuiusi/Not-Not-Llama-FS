@@ -11,13 +11,12 @@ def demo(
         producer_name: str = "ollama",
         preference: str = "",
         ignore: str = "",
-        text_model: str = "llama3",
-        image_model: str = "llava",
         apikey: str = None
 ):
     if not path.exists():
         raise ValueError(f"Path {path} does not exist")
 
+    # Get prompts
     with open("file_process_prompt.txt", "r") as f:
         prompt = f.read()
 
@@ -28,15 +27,17 @@ def demo(
         if preference != "":
             final_prompt += f"\nUser Preference: {preference}"
 
+    # Select producer to be used
     print(f"Using producer {producer_name}")
     options = {}
     produce_options = {}
-    if producer_name == 'ollama':
-        model = 'llama3'
+    if producer_name == "ollama":
+        model = "llama3"
         producer = OllamaProducer(host="localhost")
         options = {"num_predict": 128}
         produce_options = {"num_predict": -1}
     elif producer_name == "groq":
+        model = "llama3-70b-8192"
         producer = GroqProducer(api_key=apikey)
     elif producer_name == 'openai':
         model = "gpt-4o"
@@ -45,20 +46,23 @@ def demo(
         raise ValueError(f"Unknown producer {producer_name}")
 
     producer.load_directory(path)
+    
+    # Process files
+    producer.setup(prompt, model=model, options=options)
+    producer.prepare_files(path, ignore)
 
-    producer.setup(prompt, model=text_model, options=options)
-    producer.prepare_files_llamaindex(path, ignore)
+    # Generate tree
     producer.setup(final_prompt, model=model, options=produce_options)
     treedict, tree = producer.produce() # issue here with how the model is producing , dictionaries for metadata is not consistent at all
-    
-    print(tree) # Show the ascii art for the new directory
+   
+    # Print the ASCII represented by the stage 
+    print(tree) 
     return treedict
 
-
 def move_file(src, file):
-    dst_path = os.path.dirname(file['dst_path'])
-    dst_path = os.path.join(src, dst_path) # absolute path so the subdirectory gets created in the right directory 
-    os.makedirs(dst_path, exist_ok=True) # makes the directories if the directories didn't exist previously
+    dst_path = os.path.dirname(file["dst_path"])
+    dst_path = os.path.join(src, dst_path)
+    os.makedirs(dst_path, exist_ok=True)
 
     # Move the file from the original directory to the new directory
     try:
@@ -69,5 +73,3 @@ def move_file(src, file):
     except Exception as e:
         raise e
 
-def review(treedict):
-    pass

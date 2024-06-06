@@ -1,11 +1,13 @@
 import json
 import logging
 import pathlib
+import os
 
 import groq
 import magic
+from llama_index.core import SimpleDirectoryReader
 
-from .interface import ABCProducer
+from .interface import ABCProducer, clean_filename
 from ..fs.tree import TreeObject
 
 
@@ -37,8 +39,8 @@ class GroqProducer(ABCProducer):
         if self._client is None:
             self._client = groq.Groq(api_key=self.api_key, base_url=self.host)
         return self._client
-
-    def prepare_file(self, path: pathlib.Path):
+    
+    def prepare_files(self, path, ignore):
         if self.model is None:
             raise ValueError("Model is not set")
         if self.prompt is None:
@@ -46,48 +48,22 @@ class GroqProducer(ABCProducer):
         if self.options is None:
             raise ValueError("Options are not set")
 
-        print(f"Preparing {path}")
-        mime = magic.Magic(mime=True)
-        mime_type = mime.from_file(path.as_posix())
-        print(f"Detected mime type: {mime_type}")
-        if mime_type.startswith("text"):
-            with open(path, "r", encoding="utf-8") as f:
-                result = self.client.with_options(**self.options).chat.completions.create(
-                    messages=[
-                        {"content": self.prompt, "role": "system"},
-                        {"content": f.read(), "role": "user"}
-                    ],
-                    model=self.model,
-                    # response_format={"type": "json_object"}
-                )
-        # elif mime_type.startswith("image"):
-        #     with open(path, "rb") as f:
-        #         result = self.client.with_options(**self.options).chat.completions.create(
-        #             messages=[
-        #                 {"content": self.prompt, "role": "system"},
-        #                 {"content": f.read(), "role": "user"}
-        #             ],
-        #             model=self.model,
-        #             response_format={"type": "json_object"}
-        #         )
-        else:
-            raise ValueError(f"{mime_type} is not yet supported")
-        print(f"Prepared {path}, result: {result}")
-        self.prepared_files.append((path.as_posix(), result.choices[0].message.content))
+        reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=[ignore])
 
-    def prepare_files(self, files_type: str | None = None):
-        for file in self.files:
-            if files_type is not None:
-                mime = magic.Magic(mime=True)
-                mime_type = mime.from_file(file.as_posix())
-                if not mime_type.startswith(files_type):
-                    continue
-            if file.as_posix() in [f[0] for f in self.prepared_files]:
-                continue
-            try:
-                self.prepare_file(file)
-            except ValueError as e:
-                logging.info(e)
+        for file in reader.iter_data():
+            result = self.client.with_options(**self.options).chat.completions.create(
+				messages=[
+					{"content": self.prompt, "role": "system"},
+					{"content": str(file)[:1000], "role": "user"}
+				],
+				model=self.model,
+				response_format={"type": "json_object"}
+			)
+
+            filepath = clean_filename(file[0].doc_id)
+
+            print(f"Prepared {filepath}")
+            self.prepared_files.append((filepath, result.choices[0].message.content))
 
     def produce(self) -> TreeObject:
         if self.model is None:
@@ -113,6 +89,6 @@ class GroqProducer(ABCProducer):
             logging.error(f"Response: {groq_response}")
             raise e
 
-        return TreeObject.from_json(groq_response_json)
+        return groq_response_json, TreeObject.from_json(groq_response_json)
 
 
