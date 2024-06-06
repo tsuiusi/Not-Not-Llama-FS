@@ -7,7 +7,7 @@ import magic
 import ollama
 from llama_index.core import SimpleDirectoryReader
 
-from .interface import ABCProducer
+from .interface import ABCProducer, clean_filename
 from ..fs.tree import TreeObject
 
 
@@ -41,7 +41,7 @@ class OllamaProducer(ABCProducer):
             )
         return self._client
     
-    def prepare_files_llamaindex(self, path, ignore):
+    def prepare_files(self, path, ignore):
         if self.model is None:
             raise ValueError("Model is not set")
         if self.prompt is None:
@@ -65,10 +65,8 @@ class OllamaProducer(ABCProducer):
             filepath = clean_filename(file[0].doc_id)
 
             print(f"Prepared {filepath}")
-            self.prepared_files.append((filepath, result["response"]))
-        
-
-    def produce(self, prompt=None) -> TreeObject:
+            self.prepared_files.append((filepath, result["response"]))        
+    def produce(self) -> TreeObject:
         if self.model is None:
             raise ValueError("Model is not set")
         if self.prompt is None:
@@ -102,9 +100,3 @@ class OllamaProducer(ABCProducer):
 
         return llama_response_json, TreeObject.from_json(llama_response_json)
 
-def clean_filename(filename):
-    extension = os.path.dirname(filename)
-    base_name = os.path.basename(filename)
-    if base_name.endswith('_part_0'):
-        base_name = base_name[:-7]
-    return os.path.join(extension, base_name) 

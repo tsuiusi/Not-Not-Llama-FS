@@ -4,9 +4,7 @@ import os
 
 from not_llama_fs.producers.groq_producer import GroqProducer
 from not_llama_fs.producers.ollama_producer import OllamaProducer
-
-IMAGE_SUPPORT_PRODUCERS = ["ollama", "claude"]
-
+from not_llama_fs.producers.openai_producer import OpenAIProducer
 
 def demo(
         path: pathlib.Path,
@@ -18,6 +16,7 @@ def demo(
     if not path.exists():
         raise ValueError(f"Path {path} does not exist")
 
+    # Get prompts
     with open("file_process_prompt.txt", "r") as f:
         prompt = f.read()
 
@@ -28,21 +27,31 @@ def demo(
         if preference != "":
             final_prompt += f"\nUser Preference: {preference}"
 
+    # Select producer to be used
     print(f"Using producer {producer_name}")
     options = {}
     produce_options = {}
     if producer_name == "ollama":
-        model = 'llama3'
+        model = "llama3"
         producer = OllamaProducer(host="localhost")
         options = {"num_predict": 128}
         produce_options = {"num_predict": -1}
     elif producer_name == "groq":
+        model = "llama3-70b-8192"
         producer = GroqProducer(api_key=apikey)
+    elif producer_name == 'openai':
+        model = "gpt-4o"
+        producer = OpenAIProducer(api_key=apikey)
     else:
         raise ValueError(f"Unknown producer {producer_name}")
 
     producer.load_directory(path)
+    
+    # Process files
+    producer.setup(prompt, model=model, options=options)
+    producer.prepare_files(path, ignore)
 
+<<<<<<< HEAD
     producer.setup(prompt, model=model, options=options)
     producer.prepare_files_llamaindex(path, ignore)
     producer.setup(final_prompt, model=model, options=produce_options)
@@ -50,12 +59,20 @@ def demo(
     
     print(tree) # Show the ascii art for the new directory
     return treedict, producer
-
+=======
+    # Generate tree
+    producer.setup(final_prompt, model=model, options=produce_options)
+    treedict, tree = producer.produce() # issue here with how the model is producing , dictionaries for metadata is not consistent at all
+   
+    # Print the ASCII represented by the stage 
+    print(tree) 
+    return treedict
+>>>>>>> 5f6b36be9eb49f139c17c0408c5b8a431d3218ce
 
 def move_file(src, file):
-    dst_path = os.path.dirname(file['dst_path'])
-    dst_path = os.path.join(src, dst_path) # absolute path so the subdirectory gets created in the right directory 
-    os.makedirs(dst_path, exist_ok=True) # makes the directories if the directories didn't exist previously
+    dst_path = os.path.dirname(file["dst_path"])
+    dst_path = os.path.join(src, dst_path)
+    os.makedirs(dst_path, exist_ok=True)
 
     # Move the file from the original directory to the new directory
     try:
@@ -88,6 +105,4 @@ def review(
         preference = input("is this good?: ")
 
     return treedict
-
-
 

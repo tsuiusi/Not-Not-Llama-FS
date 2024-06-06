@@ -1,18 +1,19 @@
+import base64
 import json
 import logging
 import pathlib
-import os
 
-import groq
+import openai
 import magic
+import openai
 from llama_index.core import SimpleDirectoryReader
 
 from .interface import ABCProducer, clean_filename
 from ..fs.tree import TreeObject
 
 
-class GroqProducer(ABCProducer):
-    def __init__(self, host: str = "https://api.groq.com", api_key: str = None):
+class OpenAIProducer(ABCProducer):
+    def __init__(self, host: str = "https://api.openai.com/v1", api_key: str = None):
         super().__init__()
         self.host = host
         self.prompt = None
@@ -24,7 +25,7 @@ class GroqProducer(ABCProducer):
     def setup(
             self,
             prompt: str,
-            model: str = "llama3-70b-8192",
+            model: str = "gpt-3.5-turbo",
             options: dict | None = None,
     ):
         self.prompt = prompt
@@ -35,11 +36,11 @@ class GroqProducer(ABCProducer):
             self.options = {}
 
     @property
-    def client(self) -> groq.Groq:
+    def client(self) -> openai.OpenAI:
         if self._client is None:
-            self._client = groq.Groq(api_key=self.api_key, base_url=self.host)
+            self._client = openai.OpenAI(api_key=self.api_key, base_url=self.host)
         return self._client
-    
+
     def prepare_files(self, path, ignore):
         if self.model is None:
             raise ValueError("Model is not set")
@@ -48,17 +49,22 @@ class GroqProducer(ABCProducer):
         if self.options is None:
             raise ValueError("Options are not set")
 
-        reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=[ignore])
+        reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=[ignore]) 
 
         for file in reader.iter_data():
             result = self.client.with_options(**self.options).chat.completions.create(
-				messages=[
-					{"content": self.prompt, "role": "system"},
-					{"content": str(file)[:1000], "role": "user"}
-				],
-				model=self.model,
-				response_format={"type": "json_object"}
-			)
+                messages=[
+                    {"content": self.prompt, "role": "system"},
+                    {"role": "user", "content": str(file)[:1000]}
+                ],
+                temperature=1,
+                max_tokens=256,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0,
+                model=self.model,
+                response_format={"type": "json_object"}
+            )
 
             filepath = clean_filename(file[0].doc_id)
 
@@ -73,7 +79,7 @@ class GroqProducer(ABCProducer):
         if self.options is None:
             raise ValueError("Options are not set")
 
-        groq_response = self.client.with_options(**self.options).chat.completions.create(
+        openai_response = self.client.with_options(**self.options).chat.completions.create(
             messages=[
                 {"content": self.prompt, "role": "system"},
                 {"content": json.dumps(self.prepared_files), "role": "user"}
@@ -83,12 +89,12 @@ class GroqProducer(ABCProducer):
         ).choices[0].message.content
 
         try:
-            groq_response_json = json.loads(groq_response)
+            openai_response_json = json.loads(openai_response)
         except json.JSONDecodeError as e:
             logging.error(f"Failed to decode JSON response: {e}")
-            logging.error(f"Response: {groq_response}")
+            logging.error(f"Response: {openai_response}")
             raise e
 
-        return groq_response_json, TreeObject.from_json(groq_response_json)
+        return openai_response_json, TreeObject.from_json(openai_response_json)
 
 
