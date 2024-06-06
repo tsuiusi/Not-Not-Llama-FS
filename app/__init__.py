@@ -101,8 +101,8 @@ def revert(src, treedict):
 
         # Move the file from the original directory to the new directory
         try:
-            src_path = os.path.join(os.path.dirname(file["src_path"]), file["dst_path"])
-            dst_path = os.path.join(dst_path, os.path.basename(file["dst_path"]))
+            src_path = os.path.join(src, file["dst_path"])
+            dst_path = os.path.join(dst_path, os.path.basename(file["src_path"]))
             shutil.move(src_path, dst_path)
             print(f'Moved {src_path} to {dst_path}')
                 
