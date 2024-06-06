@@ -50,11 +50,16 @@ class OllamaProducer(ABCProducer):
             raise ValueError("Options are not set")
        
         # Split ignore to take a single string as input
-        ignore = ignore.split(',')
-        for i in range(len(ignore)):
-            ignore[i] = os.path.join(path, ignore[i].strip())
-        print(f"Ignoring files/folder: {ignore}")
+        if ignore is not None:
+            ignore = ignore.split(',')
+            for i in range(len(ignore)):
+                ignore[i] = os.path.join(path, ignore[i].strip())
+            print(f"Ignoring files/folder: {ignore}")
+        else:
+            ignore = []
+            print("Not ignoring any files")
 
+        # reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=["/Users/rtty/downloads/bigtest/goodclass-ai-tools-updated/", "/Users/rtty/downloads/bigtest/copy-gdrive-folder", "/Users/rtty/downloads/bigtest/librarian/"]) 
         reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=ignore) 
             
         for file in reader.iter_data():

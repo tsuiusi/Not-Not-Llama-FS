@@ -22,9 +22,9 @@ def demo(
 
     with open("tree_generation_prompt.txt", "r") as f:
         final_prompt = f.read()
-        if ignore != "":
+        if ignore != None:
             final_prompt += f"\nIgnore and do not change {ignore} or its contents"
-        if preference != "":
+        if preference != None:
             final_prompt += f"\nUser Preference: {preference}"
 
     # Select producer to be used
@@ -59,17 +59,69 @@ def demo(
     print(tree) 
     return treedict
 
-def move_file(src, file):
-    dst_path = os.path.dirname(file["dst_path"])
-    dst_path = os.path.join(src, dst_path)
-    os.makedirs(dst_path, exist_ok=True)
+def move_files(src, treedict):
+    for file in treedict["files"]:
+        dst_path = os.path.dirname(file["dst_path"])
+        dst_path = os.path.join(src, dst_path)
+        os.makedirs(dst_path, exist_ok=True)
 
-    # Move the file from the original directory to the new directory
-    try:
-        dst_path = os.path.join(dst_path, os.path.basename(file['dst_path']))
-        shutil.move(file['src_path'], dst_path)
-        print(f'Moved {file["src_path"]} to {dst_path}')
+        # Move the file from the original directory to the new directory
+        try:
+            dst_path = os.path.join(dst_path, os.path.basename(file['dst_path']))
+            shutil.move(file['src_path'], dst_path)
+            print(f'Moved {file["src_path"]} to {dst_path}')
 
-    except Exception as e:
-        raise e
+        except Exception as e:
+            raise e
 
+def review(
+        treedict, 
+        producer,
+        ignore: str = "",
+        apikey: str = None
+        ):
+    old_treedict = treedict
+    preference = input('Please review the changes. If you are satisfied, please enter "yes", and if not, please tell me whatever you want to change: ')
+
+    with open('tree_generation_prompt.txt', 'r') as f:
+        final_prompt = f.read()
+
+    while preference != "yes":
+        treedict, tree = producer.produce()
+
+        print(tree) 
+        preference = input("is this good?: ")
+
+    return treedict
+
+def revert(src, treedict):
+    for file in treedict["files"]: 
+        dst_path = os.path.dirname(file["src_path"]) 
+        os.makedirs(dst_path, exist_ok=True)
+
+        # Move the file from the original directory to the new directory
+        try:
+            src_path = os.path.join(src, file["dst_path"])
+            dst_path = os.path.join(dst_path, os.path.basename(file["src_path"]))
+            shutil.move(src_path, dst_path)
+            print(f'Moved {src_path} to {dst_path}')
+                
+            # If the directory is empty, delete
+            src_path = os.path.dirname(src_path)
+            while src_path != src:
+                if os.path.exists(src_path) and os.path.isdir(src_path):
+                    if not os.listdir(src_path):
+                        os.rmdir(src_path)
+                        print(f"Directory {src_path} was empty, removed")
+                    else:
+                        break
+                else:
+                    print(f"Directory {src_path} does not exist")
+                    break 
+                
+                src_path = os.path.dirname(src_path)
+
+        except Exception as e:
+            raise e
+
+# (or reuse the move_files)
