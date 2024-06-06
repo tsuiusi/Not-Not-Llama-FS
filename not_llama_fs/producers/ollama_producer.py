@@ -59,8 +59,8 @@ class OllamaProducer(ABCProducer):
             ignore = []
             print("Not ignoring any files")
 
-        reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=["/Users/rtty/downloads/bigtest/goodclass-ai-tools-updated/", "/Users/rtty/downloads/bigtest/copy-gdrive-folder", "/Users/rtty/downloads/bigtest/librarian/"]) 
-        # reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=ignore) 
+        # reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=["/Users/rtty/downloads/bigtest/goodclass-ai-tools-updated/", "/Users/rtty/downloads/bigtest/copy-gdrive-folder", "/Users/rtty/downloads/bigtest/librarian/"]) 
+        reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=ignore) 
             
         for file in reader.iter_data():
             result = self.client.generate(
