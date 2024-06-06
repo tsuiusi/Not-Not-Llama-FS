@@ -63,9 +63,7 @@ class OllamaProducer(ABCProducer):
             filepath = clean_filename(file[0].doc_id)
 
             print(f"Prepared {filepath}")
-            self.prepared_files.append((filepath, result["response"]))
-        
-
+            self.prepared_files.append((filepath, result["response"]))        
     def produce(self) -> TreeObject:
         if self.model is None:
             raise ValueError("Model is not set")
