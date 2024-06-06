@@ -124,4 +124,3 @@ def revert(src, treedict):
         except Exception as e:
             raise e
 
-# (or reuse the move_files)

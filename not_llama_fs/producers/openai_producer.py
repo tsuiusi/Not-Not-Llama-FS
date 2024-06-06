@@ -57,6 +57,7 @@ class OpenAIProducer(ABCProducer):
                 ignore[i] = os.path.join(path, ignore[i].strip())
             print(f"Ignoring files/folder: {ignore}")
         else:
+            print("Nothing was ignored")
             ignore = []
 
         reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=ignore) 
