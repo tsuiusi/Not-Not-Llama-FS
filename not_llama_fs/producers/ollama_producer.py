@@ -48,8 +48,14 @@ class OllamaProducer(ABCProducer):
             raise ValueError("Prompt is not set")
         if self.options is None:
             raise ValueError("Options are not set")
+       
+        # Split ignore to take a single string as input
+        ignore = ignore.split(',')
+        for i in range(len(ignore)):
+            ignore[i] = os.path.join(path, ignore[i].strip())
+        print(f"Ignoring files/folder: {ignore}")
 
-        reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=[ignore]) 
+        reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=ignore) 
             
         for file in reader.iter_data():
             result = self.client.generate(
