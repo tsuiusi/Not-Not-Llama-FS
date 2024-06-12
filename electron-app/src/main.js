@@ -8,6 +8,15 @@ async function handleFileOpen () {
 	}
 }
 
+async function handleDirectoryOpen () {
+	const { canceled, filePaths } = await dialog.showOpenDialog({
+		properties: ['openDirectory']
+	});
+	if (!canceled) {
+		return filePaths[0];
+	}
+}
+
 const createWindow = () => {
 	const mainWindow = new BrowserWindow({
 		webPreferences: {
@@ -26,7 +35,7 @@ ipcMain.on('dropped-file', (event, arg) => {
 
 // Create a window when there isn't a window
 app.whenReady().then(() => {
-	ipcMain.handle('dialog:openFile', handleFileOpen)
+	ipcMain.handle('dialog:openDirectory', handleDirectoryOpen)
 	createWindow()
 
 	app.on('activate', () => {

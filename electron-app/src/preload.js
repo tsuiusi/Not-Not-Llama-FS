@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron/renderer')
 
 contextBridge.exposeInMainWorld('electronAPI', {
-	openFile: () => ipcRenderer.invoke('dialog:openFile')
+	openDirectory: () => ipcRenderer.invoke('dialog:openDirectory'),
+	sendDroppedFiles: (filePaths) => ipcRenderer.sendSync('dropped-file', filePaths)
 });
