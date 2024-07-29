@@ -14,7 +14,7 @@ def main():
     parser.add_argument("--producer", type=str, help="Producer to use: ollama/groq/openai", default="ollama")
     parser.add_argument("--preference", type=str, help="Preferences to how the new directory should be sorted", default=None)
     parser.add_argument("--ignore", type=str, help="Folders to ignore", default=None)
-    parser.add_argument("--apikey", type=str, help="API key for Groq/Claude/OpenAI", default="sk-proj-dpKFPzwwKO2c8HkTOQABT3BlbkFJB4h5AjAMqAvY9cfmVwYx")
+    parser.add_argument("--apikey", type=str, help="API key for Groq/Claude/OpenAI", default="") # API KEY HERE
     args = parser.parse_args()
     print(args.command, args.path)
 
