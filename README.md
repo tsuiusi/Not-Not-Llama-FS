@@ -10,6 +10,8 @@ The usage is basically identical to Not Llama FS, but with a few more parameters
 
 ![demo](src/demo.gif)
 
+The code is unbelievably messy, and I might've broken the GUI with my latest edits. 
+
 (the rest of the docs here is from not llama fs)
 
 ### Prerequisites
@@ -24,7 +26,9 @@ ollama pull llama3
 ollama pull llava
 ```
 
-If you want to use Groq, ChatGPT or Claude, you will need to get the API keys.  
+If you want to use Groq, ChatGPT or Claude, you will need to get the API keys. If you want to use the UI version (still in progress) paste your API keys into the comments in ``main.py``. 
+
+Also install requirements.txt
 
 ## Usage
 
