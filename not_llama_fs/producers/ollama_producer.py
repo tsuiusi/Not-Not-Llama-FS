@@ -59,7 +59,6 @@ class OllamaProducer(ABCProducer):
             ignore = []
             print("Not ignoring any files")
 
-        # reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=["/Users/rtty/downloads/bigtest/goodclass-ai-tools-updated/", "/Users/rtty/downloads/bigtest/copy-gdrive-folder", "/Users/rtty/downloads/bigtest/librarian/"]) 
         reader = SimpleDirectoryReader(path, filename_as_id=True, recursive=True, exclude=ignore) 
             
         for file in reader.iter_data():
@@ -75,6 +74,7 @@ class OllamaProducer(ABCProducer):
 
             print(f"Prepared {filepath}")
             self.prepared_files.append((filepath, result["response"]))        
+
     def produce(self) -> TreeObject:
         if self.model is None:
             raise ValueError("Model is not set")
@@ -106,4 +106,3 @@ class OllamaProducer(ABCProducer):
                 llama_response_json["files"][n]["dst_path"] = dst_path.as_posix()
 
         return llama_response_json, TreeObject.from_json(llama_response_json)
-

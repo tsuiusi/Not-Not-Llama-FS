@@ -2,18 +2,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>nihao shijie</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Llama FS</title>
+	<style>
+		h1 {
+			text-align: center;
+			position: relative;
+			transform: rotate(-10deg);
+			animation: spinY 1s linear infinite;
+		}
+
+		.text {
+			position: relative;
+			font-size: 5em;
+			font-weight: 800;
+			font-style: italic;
+			background-image: linear-gradient(to top, red, yellow);
+			color: transparent;
+			-webkit-background-clip: text;
+			background-clip: text;
+			z-index: 1;
+			text-decoration: none; /* Remove default underline */
+		}
+		.text::before {
+			content: attr(data-text);
+			position:absolute;
+			top:0;
+			bottom:0;
+			left:0;
+			right:0;
+			color: transparent;
+			z-index:-1;
+			text-shadow:
+				3px 3px 0 #802500,
+				4px 4px 0 #802500,
+				5px 5px 0 #802500,
+				6px 6px 0 #802500,
+				7px 7px 0 #802500,
+				8px 8px 0 #802500,
+				9px 9px 0 #802500,
+				10px 10px 0 #802500,
+				11px 11px 0 #802500,
+				12px 12px 0 #802500,
+				13px 13px 0 #802500,
+				14px 14px 0 #802500,
+				15px 15px 0 #802500,
+				16px 16px 0 #802500,
+				17px 17px 0 #802500,
+				18px 18px 0 #802500,
+				19px 19px 0 #802500,
+				20px 20px 0 #802500,
+				21px 21px 0 #802500,
+				22px 22px 0 #802500,
+				23px 23px 0 #802500,
+				24px 24px 0 #802500,
+				25px 25px 0 #802500,
+				26px 26px 0 #802500,
+				27px 27px 0 #802500,
+				28px 28px 0 #802500,
+				29px 29px 0 #802500,
+				30px 30px 0 #802500;
+		}
+		@keyframes spinY {
+			from {
+				transform: rotateY(360deg);
+			} 
+			to {
+				transform: rotateY(0deg);
+			}
+		}
+	</style>
+
+
 </head>
 <body>
-  <h1>do you think it's possible to build a time machine?</h1>
-  <button type="button" id="btn">Click?</button>
-  <br>
-  <p id="filePath"></p>
-  <br>
-  <div id="tree"></div>
-  <button type="button" id="processBtn">PROCESS</button>
-  <script src="src/renderer.js"></script>
+	<h1>Llama FS</h1>
+	<button type="button" id="btn">Select Folder</button>
+	<p id="filePath"></p>
+	<br>
+	<p id="currentTree"></p>
+	<br>
+	<div id="tree"></div>
+	<button type="button" id="processBtn">Sort!</button>
+	<button type="button" id="revertBtn">Revert</button>
+	<script src="src/renderer.js"></script>
 </body>
 </html>

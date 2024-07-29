@@ -32,6 +32,23 @@ def process_file():
         return jsonify({"status": "success", "message": f"Processed file: {file_path}", "treedict": treedict}), 200
 
     except Exception as e:
+        print(e)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/revert', methods=['POST'])
+def revert_endpoint():
+    data = request.json
+    file_path = data.get('file_path')
+    treedict = data.get('treedict')
+
+    if not file_path or not treedict:
+        return jsonify({"status": "error", "message": "File path or treedict missing"}), 400
+
+    try: 
+        revert(file_path, treedict)
+        return jsonify({"status": "success", "message": f"Moved files for: {file_path}"}), 200
+
+    except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/move_files', methods=['POST'])

@@ -1,20 +1,16 @@
-# NotLlamaFS
+# Not Not LLama FS
+> didn't accept my PR so i made my own repo
 
-NotLlamaFS is an AI self-organizing file manager. It automatically renames and organizes your files based on their contents and well-known conventions (e.g., time) using Chat AI. Currently the support is made for text files and image files (if used model supports it).
+An extension of [Not Llama FS](https://github.com/drforse/not-llama-fs), which in turn is an extension of [Llama FS](https://github.com/iyaja/llama-fs).
+* Llama FS didn't work on anybody's computer, so Not Llama FS was made to prove the concept, but it only proposes a hypothetical new directory structure
+* Not^2 Llama FS actually reorganizes it for you. I'm working on making the directory structure better, and for users to specify how they want to organize it
+* I also include an electron-app GUI that you can use to sort your folders. Drag a folder in and press the button, your folder is sorted. 
 
-It's made out of fun and in my opinion is useless.
+The usage is basically identical to Not Llama FS, but with a few more parameters. I'll work on the documentation later. I also need to update some things (including updating to llama 3.1)
 
-## Inspiration
+![](src/demo.mov)
 
-I just wanted [llama_fs](https://github.com/iyaja/llama-fs) to actually work. So I rewrote it from scratch.
-
-> Open your `~/Downloads` directory. Or your Desktop. It's probably a mess...
-
-## Proclamation
-It's not doing anything yet, just demonstrating the concept.
-NotLlamaFS is not a fork, but a rewrite from scratch!
-
-## Installation
+(the rest of the docs here is from not llama fs)
 
 ### Prerequisites
 
@@ -30,27 +26,6 @@ ollama pull llava
 
 If you want to use Groq, ChatGPT or Claude, you will need to get the API keys.  
 
-### Installing
-
-To install the project, follow these steps:
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/drforse/not-llama-fs.git
-   ```
-
-2. Navigate to the project directory:
-    ```bash
-    cd not-llama-fs
-    ```
-
-3. Install requirements
-   ```bash
-   pip install -r requirements.txt
-   ```
-   or with poetry
-    ```bash
-    poetry install 
-    ```
 ## Usage
 
 To see the demo of the resulting file structure, run the command:
@@ -90,28 +65,8 @@ Defaults are:
 - text model is used for groq (setting ignored, code here is not completely alright)  
 - text model is used for openai (setting ignored, code here is not completely alright)  
 
-
-## Differences from LlamaFS
-- NotLlamaFS is much better written, and has a better structure.
-- NotLlamaFS works, and documentations is intended to fix not-understandable parts of the launch.
-- NotLlamaFS is developed by a Windows's user, so it's more likely to work on Windows.
-- NotLlamaFS not implementing an API, but instead it's a cli tool.
-- NotLlamaFS supports not only local llama (moondream) and groq, but also ChatGPT and Claude.
-- NotLlamaFS doesn't mix producers (moondream, groq, chatgpt, claude), but uses what it's told to use.
-- NotLlamaFS won't have a frontend, but it's planned to have a GUI.
-- NotLlamaFS doesn't try to say "its extremely fast because of using obvious cache for not reprocessing the same file" :D
-
-
-## What's next for NotLlamaFS
-
-- Better configuration
-- Updating file structure in system
-- Better support for different models
-- Better support for different file types
-- Better documentation
-- Improved prompts
-- User-friendly interface (GUI)
-- Custom rules for organizing files
-
 ## Credits
-https://github.com/iyaja/llama-fs - for the idea, inspiration and making me angry (for nothing working!) enough to write this.
+This was the original credits:
+> https://github.com/iyaja/llama-fs - for the idea, inspiration and making me angry (for nothing working!) enough to write this.
+
+https://github.com/drforse/not-llama-fs - for the sorting implementation, and not accepting my PR.
