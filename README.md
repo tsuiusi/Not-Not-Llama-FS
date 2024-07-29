@@ -8,7 +8,7 @@ An extension of [Not Llama FS](https://github.com/drforse/not-llama-fs), which i
 
 The usage is basically identical to Not Llama FS, but with a few more parameters. I'll work on the documentation later. I also need to update some things (including updating to llama 3.1)
 
-![demo](src/demo.mov)
+![demo](src/demo.gif)
 
 (the rest of the docs here is from not llama fs)
 
